@@ -13,7 +13,7 @@ function L = implMipu(R,In)
 % L.grid Zeitgitter (Zeitpunkte der berechneten Lösungen)
 % L.x Matrix mit Lösungen x(t_i) in R^(dxm), Jede Spalte: ein x_i, i=0..m-1
 %
-% author: Christian Winkler, christian.winkler@uni.kn
+% author: Christian Winkler
 
 m = length(In.grid); %Anzahl der Zeitschritte
 
@@ -26,7 +26,7 @@ for it=1:1:m-1
 	t1 = In.grid(it+1);
 	h = In.grid(it+1)-In.grid(it); %breite Zeitschritt
 	x0 = L.x(:,it);
-	Phi = @(x) x0-x+h*R.F(t1-0.5*h,0.5*(x+x0));
+	Phi = @(x) x0-x+h*R.F(t1,x);
 	% Berechnung der approx. Lösung am nächsten Gitterzeitpunkt mithilfe fsolve (sucht nullstelle von Phi)
 	x1 = fsolve(Phi,x0);
 	%Speichern in der Outputvariablen

@@ -22,5 +22,5 @@ legend(leg);
 
 %checken, wo zum ersten Ziellinie überquert wird
 n = find(ort(1,:) >=1, 1);
-printf('\nZiellinie überquert bei t=%.2f\n',L.grid(n));
+fprintf('\n Ziellinie überquert bei t=%.2f\n',L.grid(n));
 end

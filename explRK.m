@@ -46,7 +46,7 @@ for it=1:1:m-1
 		for i=1:1:j-1
 			arg = arg + h * BT.A(j,i) * K(1:end,j-1);
 		end
-		K(1:end,j) = R.F(arg);
+		K(1:end,j) = R.F(t0+h*BT.c(j), arg);
 	end
 	% Jetzt die Verfahrensfunktion
 	V = zeros(length(x0),1);

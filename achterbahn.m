@@ -1,5 +1,5 @@
 PLOT=true;
-bahn = 1;
+bahn = 4;
 m 	= 1;%Masse 1kg
 gr 	= [0;-10];%Erdbeschleunigung
 
@@ -37,8 +37,7 @@ if PLOT
 end
 
 %Definiere 'Rechte Seite' -> AWP vom ÜB auf System 1. Ordnung umgewandelt: y(1):=sigma(t),y(2) = sigma'(t)
-F = @(y) [y(2); (1./(norm(dg(y(1))))^2)*(m*gr'*dg(y(1)) - y(2)^2*(ddg(y(1)))'*dg(y(1)))];
-
+F = @(t,y) [y(2); (1./(norm(dg(y(1))))^2)*(m*gr'*dg(y(1)) - y(2)^2*(ddg(y(1)))'*dg(y(1)))];
 %Definiere Startwert [s(0),y(0)]: s(0) ist der Ort zum Zeitpunkt 0, also Start der Bahn = g(0). y(0): Startgeschw. = 0
 x0 = [0;0];
 %  x0 = [0;0.5];
@@ -52,21 +51,27 @@ m 	=100;
 BT_RK = [0,0,0,0,0;0.5,0.5,0,0,0;0.5,0,0.5,0,0;1,0,0,1,0;0,1/6.,1/3.,1/3.,1/6.]; % klass. RK Stufe 4
 BT_Ee = [0,0;0,1]; %Euler_expl
 In = struct('d',2,'xstart',x0,'grid',linspace(t0,t1,m),'BT',zeros(0,0));
+newton_param = struct('maxIt',1000,'eps_rel',1.e-3 ,'eps_abs',1.e-3);
+In.newton = newton_param; %Parameter für Nullstellen
 R.F = F;
+
 %Diverse solver anwerfen
+%explizite
 In.BT = BT_RK;
 L_RK = explRK(R,In);
 In.BT = BT_Ee;
 L_Ee = explRK(R,In);
-
+%implizite
+L_Ei = implEuler(R,In);
 %plot height vs. time für verschiedene solver
 figure();
 hold on;
-p	 = plot_time_height(L_RK,nam,'sol', g);
-p	 = plot_time_height(L_Ee,nam,'expl', g);
-
+p	 = plot_time_height(L_RK,nam,'RK expl', g);
+p	 = plot_time_height(L_Ee,nam,'Euler expl', g);
+p	 = plot_time_height(L_Ei,nam,'Euler impl', g);
 plot(gca(),L_RK.grid,zeros(length(L_RK.grid))); %Einen 'Boden' einzeichnen
 leg1 = sprintf('Bahn: %s, Solver:RK-4',nam);
 leg2 = sprintf('Bahn: %s, Solver:Euler expl.',nam);
-legend(leg1,leg2,'Boden');
+leg3 = sprintf('Bahn: %s, Solver:Euler impl.',nam);
+legend(leg1,leg2,leg3,'Boden');
 hold off;

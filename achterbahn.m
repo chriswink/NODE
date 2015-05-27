@@ -1,5 +1,5 @@
 PLOT=true;
-bahn = 4;
+bahn = 5;
 m 	= 1;%Masse 1kg
 gr 	= [0;-10];%Erdbeschleunigung
 
@@ -20,10 +20,22 @@ elseif 	bahn==3
 	ddg		= @(x) [0;8/3]; %2.Ableitung der Bahn
 	nam		= 'Parabel verschoben';
 elseif 	bahn==4
-	g 		= @(x) [x;0.8-0.8*x-0.1*sin(8*pi*x)]; %wellenbahn. Diese ist schwer für die solver!
-	dg		= @(x) [1;-0.8-0.8*pi*cos(8*pi*x)]; %1.Ableitung der Bahn
-	ddg		= @(x) [0;6.4*pi*sin(8*pi*x)]; %2.Ableitung der Bahn
+	g 		= @(x) [x;0.8-0.8*x-0.05*sin(8*pi*x)]; %wellenbahn. Diese ist schwer für die solver!
+	dg		= @(x) [1;-0.8-0.4*pi*cos(8*pi*x)]; %1.Ableitung der Bahn
+	ddg		= @(x) [0;3.2*pi*sin(8*pi*x)]; %2.Ableitung der Bahn
 	nam		= 'Wellen';
+elseif 	bahn==5
+    
+	g 		= @(x) [0.8*(1.35*pi/2*(x+0.01)-sin(1.35*pi/2*(x+0.01)));...
+                    0.8 *(-1+cos((x+0.01)*pi/2)) + 0.8]; %Zykloid
+    
+    dg		= @(x) [0.8*1.35*pi/2-0.8*1.35*pi/2*cos(1.35*pi/2*(x+0.01));...
+                    -sin((x+0.01)*pi/2)*0.8*pi/2]; %1.Ableitung der Bahn
+% 	ddg		= @(x) [0;0]; %2.Ableitung der Bahn
+% 	dg		= @(x) [0.8*1.35*pi/2-0.8*1.35*pi/2*cos(1.35*pi/2*x);-0.8*pi/2*sin(x*pi/2)]; %1.Ableitung der Bahn
+	ddg		= @(x) [0.8*(1.35*pi/2)^2*sin(1.35*pi/2*(x+0.01));...
+                    -0.8*(pi/2)^2*cos((x+0.01)*pi/2)]; %2.Ableitung der Bahn
+	nam		= 'Zykloid';
 end
 
 %plotte Bahn
@@ -39,20 +51,23 @@ end
 %Definiere 'Rechte Seite' -> AWP vom ÜB auf System 1. Ordnung umgewandelt: y(1):=sigma(t),y(2) = sigma'(t)
 F = @(t,y) [y(2); (1./(norm(dg(y(1))))^2)*(m*gr'*dg(y(1)) - y(2)^2*(ddg(y(1)))'*dg(y(1)))];
 %Definiere Startwert [s(0),y(0)]: s(0) ist der Ort zum Zeitpunkt 0, also Start der Bahn = g(0). y(0): Startgeschw. = 0
-x0 = [0;0];
+x0 = [0.0;0.0];
 %  x0 = [0;0.5];
 
 %Definiere Intervall zur Lsg und Anzahl Zeitschritte
 t0	=0;
 t1	=1.2;
-m 	=100;
+m 	=500;
 
 %Jetzt alle infos in struct packen für den solver
 BT_RK = [0,0,0,0,0;0.5,0.5,0,0,0;0.5,0,0.5,0,0;1,0,0,1,0;0,1/6.,1/3.,1/3.,1/6.]; % klass. RK Stufe 4
 BT_Ee = [0,0;0,1]; %Euler_expl
 In = struct('d',2,'xstart',x0,'grid',linspace(t0,t1,m),'BT',zeros(0,0));
-newton_param = struct('maxIt',1000,'eps_rel',1.e-3 ,'eps_abs',1.e-3);
-In.newton = newton_param; %Parameter für Nullstellen
+In.zerosolver = @fsolve; %Verfahren zur Nullstellenbestimmung
+maxIt = 10000;
+eps = 1.e-4;
+nullit = @(phi,x0) zeroIterate(phi,x0,maxIt,eps);
+In.zerosolver = nullit;
 R.F = F;
 
 %Diverse solver anwerfen
@@ -63,15 +78,19 @@ In.BT = BT_Ee;
 L_Ee = explRK(R,In);
 %implizite
 L_Ei = implEuler(R,In);
+L_Mp = implMipu(R,In);
 %plot height vs. time für verschiedene solver
 figure();
 hold on;
 p	 = plot_time_height(L_RK,nam,'RK expl', g);
 p	 = plot_time_height(L_Ee,nam,'Euler expl', g);
 p	 = plot_time_height(L_Ei,nam,'Euler impl', g);
+p	 = plot_time_height(L_Mp,nam,'impl. Mittelpunkt', g);
 plot(gca(),L_RK.grid,zeros(length(L_RK.grid))); %Einen 'Boden' einzeichnen
 leg1 = sprintf('Bahn: %s, Solver:RK-4',nam);
 leg2 = sprintf('Bahn: %s, Solver:Euler expl.',nam);
 leg3 = sprintf('Bahn: %s, Solver:Euler impl.',nam);
-legend(leg1,leg2,leg3,'Boden');
+leg4 = sprintf('Bahn: %s, Solver:impl. Mittelpunkt',nam);
+
+legend(leg1,leg2,leg3,leg4,'Boden');
 hold off;

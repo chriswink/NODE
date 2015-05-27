@@ -1,4 +1,4 @@
-function x = newton(f, Df, x0, eps_rel, eps_abs, maxIt)
+function x = newton(f, DF, x0, eps_rel, eps_abs, maxIt)
 % description: Newton Verfahren zur Nullstellensuche
 % 
 % input:
@@ -13,8 +13,8 @@ function x = newton(f, Df, x0, eps_rel, eps_abs, maxIt)
 % x ... approximierte Nullstelle der Fkt.
 %
 %author: Christian Winkler
-i=0;
-while i<maxIt
+i=1;
+while i<=maxIt
 	%Iteration
 	A = DF(x0);
 	b = -f(x0);
@@ -25,10 +25,14 @@ while i<maxIt
 	%Fehler betrachten
 	err_abs = max(abs(x));
 	err_rel = norm(x-x0)/norm(x0);
-	if err_abs <= eps_abs and err_rel <= eps_rel
+	if err_abs <= eps_abs || err_rel <= eps_rel
 		break;
 	end
 	
-	x0 = x;
+	x0 = x;beermann/en/
 	i = i+1;
+end
+if i == maxIt
+    error('Max. Iterationen  (%d) erreicht, keine Nullstelle approximiert.',maxIt);
+end
 end

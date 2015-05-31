@@ -13,6 +13,7 @@ function L = implMipu(R,In)
 % output:
 % L.grid Zeitgitter (Zeitpunkte der berechneten Lösungen)
 % L.x Matrix mit Lösungen x(t_i) in R^(dxm), Jede Spalte: ein x_i, i=0..m-1
+% L.name Name des Verfahrens
 %
 % author: Christian Winkler
 
@@ -33,3 +34,4 @@ for it=1:1:m-1
 	%Speichern in der Outputvariablen
 	L.x(:,it+1) = x1;
 end
+L.name = 'Mittelpunkt impl.';

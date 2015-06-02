@@ -28,7 +28,7 @@ for it=1:1:m-1
 	t1 = In.grid(it+1);
 	h = In.grid(it+1)-In.grid(it); %breite Zeitschritt
 	x0 = L.x(:,it);
-	Phi = @(x) x0-x+h*R.F(t1-0.5*h,0.5*(x+x0));
+	Phi = @(x) x0 + h * R.F(t1-0.5*h,0.5*(x+x0)) - x;
 	% Berechnung der approx. Lösung am nächsten Gitterzeitpunkt mithilfe fsolve (sucht nullstelle von Phi)
 	x1 = In.zerosolver(Phi,x0);
 	%Speichern in der Outputvariablen

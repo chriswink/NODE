@@ -6,18 +6,22 @@
 % mail: christian.winkler@uni.kn, alexander.blech@uni.kn
 
 function pendel()
-%PARAMETER
-ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false;
+
+%PARAMETER: Hier wählen, was geplottet werden soll, und ob fsolve oder
+%fixpunktiteration in impliziten Verfahren genutzt wird.
+ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = false;
+
 g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
-t1  = 10; %intervall, groß, da langzeitverhalten betrachtet wird
+t1  = 100; %intervall, groß, da langzeitverhalten betrachtet wird
 
-h = 1.5e-2; %Schrittweite
+h = 1e-3; %Schrittweite
+% 
 N = round((t1-t0)/h); %Anzahl Schritte
 %rechte Seite
 f   = @(t,x)[x(2);-g/l*x(1)];
-x0  = [pi/20;0]; %Anfangswert: [Auslenkung(in Grad);Anfangswinkelgeschw.]
+x0  = [pi/10;0]; %Anfangswert: [Auslenkung(in Grad);Anfangswinkelgeschw.]
 
 %SOLVER
 %Jetzt alle infos in struct packen für die solver
@@ -45,19 +49,22 @@ L_Ee.name = 'Euler expl.';
 %implizite
 L_Ei = implEuler(R,In);
 L_Mp = implMipu(R,In);
-
-
-
+% LG = gauss2(R,In);
 
 %PLOT
 if ZEITPLOT
-    plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
+%     plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
+    plot_time_phi([L_RK,L_Mp]);
 end
 if PHASENPLOT
     figure(2);
-    plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
+%     plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
+    plot_phasenraum([L_RK,L_Mp]);
 end
-% 
+if ANIMATED
+ animated(L_Ee)
+end
+ 
 end
 
 function ax = plot_time_phi(L)
@@ -92,4 +99,15 @@ xlabel('$\varphi$','Interpreter','LaTex');
 ylabel('$\dot\varphi(t)$','Interpreter','LaTex');   
 legend('Location','best');
 hold off;
+end
+
+function ax = animated(L)
+    figure();
+    hold on;
+    plot(0,1,'x');
+    h = L.grid(2)-L.grid(1);
+    title(sprintf('Math. Pendel: %s, h=%.2e',L.name,h));
+    xlim([-1.5,1.5]); ylim([-0.1,2.1]);
+    ax = gca();
+    comet(ax,sin(L.x(1,:)),1-cos(L.x(1,:)));
 end

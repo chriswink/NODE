@@ -16,11 +16,11 @@ for j=1:N
     end
 end
 
-%Für Aufgabe 2a):
-g = @(z)(1+ z + 0.5.*z.^2 + 1/6 .* z.^3 + 1/24 .* z.^4);
-x = linspace(0,2,100);
-arg = x*i*sqrt(9.81/1);
-plot(x,abs(g(arg)));
+% %Für Aufgabe 2a):
+% g = @(z)(1+ z + 0.5.*z.^2 + 1/6 .* z.^3 + 1/24 .* z.^4);
+% x = linspace(0,3,100);
+% arg = x*i;%*sqrt(9.81/1);
+% plot(x,abs(g(arg)));
 
 Z = abs(r);
 image(real(x),imag(y),rot90(Z),'CDataMapping','scaled');

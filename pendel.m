@@ -9,14 +9,14 @@ function pendel()
 
 %PARAMETER: Hier wählen, was geplottet werden soll, und ob fsolve oder
 %fixpunktiteration in impliziten Verfahren genutzt wird.
-ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = false;
+ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = true;
 
 g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
-t1  = 100; %intervall, groß, da langzeitverhalten betrachtet wird
+t1  = 30; %intervall, groß, da langzeitverhalten betrachtet wird
 
-h = 1e-3; %Schrittweite
+h = 1.e-2; %Schrittweite
 % 
 N = round((t1-t0)/h); %Anzahl Schritte
 %rechte Seite
@@ -47,22 +47,22 @@ In.BT = BT_Ee;
 L_Ee = explRK(R,In);
 L_Ee.name = 'Euler expl.';
 %implizite
-L_Ei = implEuler(R,In);
-L_Mp = implMipu(R,In);
+% L_Ei = implEuler(R,In);
+% L_Mp = implMipu(R,In);
 % LG = gauss2(R,In);
 
 %PLOT
 if ZEITPLOT
 %     plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
-    plot_time_phi([L_RK,L_Mp]);
+    plot_time_phi([L_RK]);
 end
 if PHASENPLOT
     figure(2);
 %     plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
-    plot_phasenraum([L_RK,L_Mp]);
+    plot_phasenraum([L_RK]);
 end
 if ANIMATED
- animated(L_Ee)
+ animated(L_RK)
 end
  
 end

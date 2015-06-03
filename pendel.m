@@ -9,17 +9,21 @@ function pendel()
 
 %PARAMETER: Hier wählen, was geplottet werden soll, und ob fsolve oder
 %fixpunktiteration in impliziten Verfahren genutzt wird.
-ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = false;
+ZEITPLOT = input('Erstelle Zeitplot?(1:ja, 0:nein):'); 
+PHASENPLOT = input('Erstelle Phasenraumplotß(1:ja, 0:nein):');
+ANIMATED = input('Erstelle Animation?(0:nein,1:Exp.Euler,2:imp.Euler,3:RK4,4:Mittelp.):');
+FSOLVE = false; 
 clf();
 
 g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
-t1  = 30; %intervall, groß, da langzeitverhalten betrachtet wird
+t1  = 10; %intervall, groß, da langzeitverhalten betrachtet wird
 
-h = 0.3;...1.e-2; %Schrittweite
+h = 1.e-2; %Schrittweite
 % 
 N = round((t1-t0)/h); %Anzahl Schritte
+
 %rechte Seite
 f   = @(t,x)[x(2);-g/l*x(1)];
 x0  = [pi/10;0]; %Anfangswert: [Auslenkung(in Grad);Anfangswinkelgeschw.]
@@ -48,24 +52,19 @@ In.BT = BT_Ee;
 L_Ee = explRK(R,In);
 L_Ee.name = 'Euler expl.';
 %implizite
-% L_Ei = implEuler(R,In);
+L_Ei = implEuler(R,In);
 L_Mp = implMipu(R,In);
-% LG = gauss2(R,In);
 
+L = [L_Ee,L_Ei,L_RK,L_Mp];
 %PLOT
 if ZEITPLOT
-%     plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
-    plot_time_phi([L_Mp]);
-%     plot_time_phi([L_RK]);
+    plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
 end
 if PHASENPLOT
-    figure();
-%     plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
-    plot_phasenraum([L_Mp]);
-%     plot_phasenraum([L_RK]);
+    plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
 end
 if ANIMATED
-%  animated(L_Mp)
+    animated(L(ANIMATED))
 end
  
 end
@@ -74,6 +73,7 @@ function ax = plot_time_phi(L)
 %Plotte Zeit gegen Auslenkung Phi des Pendels.
 %L ...  Liste mit Lösungen aus verschiedenen Solvern: L=[L_1,...,L_n]
 %return axes instance
+figure()
 hold on;
 for j=1:length(L)
     h   = L(j).grid(2)-L(j).grid(1);
@@ -91,6 +91,7 @@ function ax = plot_phasenraum(L)
 %Plotte Zeit gegen Auslenkung Phi des Pendels.
 %L ...  Liste mit Lösungen aus n verschiedenen Solvern: L=[L_1,...,L_n]
 %return axes instance
+figure();
 hold on;
 for j=1:length(L)
     h   = L(j).grid(2)-L(j).grid(1);

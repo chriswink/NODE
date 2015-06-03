@@ -30,7 +30,13 @@ for it=1:1:m-1
 	x0 = L.x(:,it);
 	Phi = @(x) x0 + h * R.F(t1-0.5*h,0.5*(x+x0)) - x;
 	% Berechnung der approx. Lösung am nächsten Gitterzeitpunkt mithilfe fsolve (sucht nullstelle von Phi)
-	x1 = In.zerosolver(Phi,x0);
+	if any(strcmp('newton',fieldnames(In)))
+        %Definiere Jacobian
+        dPhi = @(x) h * 0.5*R.dF(t1-0.5*h,0.5*(x+x0))-1;
+        x1 = newton(Phi,dPhi,x0);
+    else
+        x1 = In.zerosolver(Phi,x0);
+    end
 	%Speichern in der Outputvariablen
 	L.x(:,it+1) = x1;
 end

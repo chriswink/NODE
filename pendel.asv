@@ -15,7 +15,7 @@ clf();
 g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
-t1  = 30; %intervall, groß, da langzeitverhalten betrachtet wird
+t1  = 3000; %intervall, groß, da langzeitverhalten betrachtet wird
 
 h = 0.3;...1.e-2; %Schrittweite
 % 
@@ -65,7 +65,7 @@ if PHASENPLOT
 %     plot_phasenraum([L_RK]);
 end
 if ANIMATED
-%  animated(L_Mp)
+ animated(L_RK)
 end
  
 end

@@ -32,19 +32,19 @@ for it=1:1:m-1
 	t1 = In.grid(it+1);
 	h = In.grid(it+1)-In.grid(it); %breite Zeitschritt
 	x0 = L.x(:,it);
-	Phi = @(K) [R.F(tn+b1*h, x0+h*a11*K(1)+h*a12*K(2)) - K(1);...
-                R.F(tn+b2*h, x0+h*a21*K(1)+h*a22*K(2)) - K(2)];
+	Phi = @(K) [R.F(t0+b1*h, x0+h*a11*K(1)+h*a12*K(2)) - K(1);...
+                R.F(t0+b2*h, x0+h*a21*K(1)+h*a22*K(2)) - K(2)];
     K0 = [R.F(t0,x0);R.F(t0,x0)];%startwert für Iteratiion/Newton
 	% Berechnung der approx. Lösung am nächsten Gitterzeitpunkt (suche nullstelle von Phi)
-    if strcmp('newton',fieldnames(In))==true && In.newton.use == true
+    if any(strcmp('newton',fieldnames(In)))
         %Definiere Jacobian
-        d11Phi = @(z) h*a11*R.dF(tn+b1*h,x0+h*a11*z(1)+h*a12*z(2)) - 1;
-        d12Phi = @(z) h*a12*R.dF(tn+b1*h,x0+h*a11*z(1)+h*a12*z(2));
-        d22Phi = @(z) h*a22*R.dF(tn+b1*h,x0+h*a11*z(1)+h*a12*z(2)) - 1;
-        d21Phi = @(z) h*a21*R.dF(tn+b1*h,x0+h*a11*z(1)+h*a12*z(2));
-        dPhi = [d11Phi,d12Phi;...
-                d21Phi;d22Phi];
-        K = newton(Phi,dPhi,k0,In.newton.eps_rel,In.newton.eps_abs,In.newton.maxIt);
+        d11Phi = @(z) h*a11*R.dF(t0+b1*h,x0+h*a11*z(1)+h*a12*z(2)) - 1;
+        d12Phi = @(z) h*a12*R.dF(t0+b1*h,x0+h*a11*z(1)+h*a12*z(2));
+        d22Phi = @(z) h*a22*R.dF(t0+b1*h,x0+h*a11*z(1)+h*a12*z(2)) - 1;
+        d21Phi = @(z) h*a21*R.dF(t0+b1*h,x0+h*a11*z(1)+h*a12*z(2));
+        dPhi = @(z)[d11Phi(z),d12Phi(z);...
+                d21Phi(z),d22Phi(z)];
+        K = newton(Phi,dPhi,K0);
     else
         K = In.zerosolver(Phi,K0);   
     end

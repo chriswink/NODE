@@ -11,7 +11,7 @@ function pendel()
 %fixpunktiteration in impliziten Verfahren genutzt wird.
 ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = true;
 
-g   = 10;%Erdbeschl.
+g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
 t1  = 30; %intervall, groß, da langzeitverhalten betrachtet wird

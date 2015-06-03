@@ -14,9 +14,9 @@ ZEITPLOT = true; PHASENPLOT = true; FSOLVE = false; ANIMATED = true;
 g   = 9.81;%Erdbeschl.
 l   = 1.0; %Länge des Pendels
 t0  = 0;
-t1  = 30; %intervall, groß, da langzeitverhalten betrachtet wird
+t1  = 300; %intervall, groß, da langzeitverhalten betrachtet wird
 
-h = 1.e-2; %Schrittweite
+h = 3.e-1; %Schrittweite
 % 
 N = round((t1-t0)/h); %Anzahl Schritte
 %rechte Seite
@@ -48,21 +48,21 @@ L_Ee = explRK(R,In);
 L_Ee.name = 'Euler expl.';
 %implizite
 % L_Ei = implEuler(R,In);
-% L_Mp = implMipu(R,In);
+L_Mp = implMipu(R,In);
 % LG = gauss2(R,In);
 
 %PLOT
 if ZEITPLOT
 %     plot_time_phi([L_Ei,L_RK,L_Ee,L_Mp]);
-    plot_time_phi([L_RK]);
+    plot_time_phi([L_Mp,L_RK]);
 end
 if PHASENPLOT
     figure(2);
 %     plot_phasenraum([L_Ei,L_RK,L_Mp,L_Ee]);
-    plot_phasenraum([L_RK]);
+    plot_phasenraum([L_Mp,L_RK]);
 end
 if ANIMATED
- animated(L_RK)
+ animated(L_Mp)
 end
  
 end

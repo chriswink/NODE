@@ -29,7 +29,7 @@ while i<=maxIt
 		break;
 	end
 	
-	x0 = x;beermann/en/
+	x0 = x;
 	i = i+1;
 end
 if i == maxIt

@@ -28,7 +28,7 @@ b1 = 0.5 - sqrt(3)/6; b2 = 0.5 + sqrt(3)/6;
 c1 = 0.5; c2 = 0.5;
 %%%%%%%%%%%beginne mit berechnung der lösungen%%%%%%%%%%%%%%%%%%%%%%%
 for it=1:1:m-1
-    t = In.grid(it);
+    t0 = In.grid(it);
 	t1 = In.grid(it+1);
 	h = In.grid(it+1)-In.grid(it); %breite Zeitschritt
 	x0 = L.x(:,it);
